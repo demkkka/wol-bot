@@ -1,0 +1,4 @@
+paramiko
+ping3
+pyTelegramBotAPI
+wakeonlan

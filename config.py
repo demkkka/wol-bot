@@ -1,8 +1,7 @@
-botToken = 'xyzxyzxyzxyzxyzxyzxyzxyzxyzxyzxyzxyz'
+botToken = '1111111:xyzxyzxyzxyzxyzxyzxyzxyz'
 telegramUsername = 'tglogin'
-winPcMac = 'AA:AA:AA:AA:AA:A'
+winPcMac = 'AA:AA:AA:AA:AA:AA'
 winPcIp = '192.168.1.100'
 winPcUsername = 'username'
 winPcPassword = 'password'
 sshPort = '22'
-

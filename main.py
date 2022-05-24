@@ -1,8 +1,8 @@
 import paramiko
-import subprocess
 from time import sleep
 from ping3 import ping
 from telebot import telebot, types
+from wakeonlan import send_magic_packet
 from config import botToken, telegramUsername, winPcMac, winPcUsername, winPcIp, winPcPassword, sshPort
 
 bot = telebot.TeleBot(botToken)
@@ -17,20 +17,15 @@ def actions_keyboard():
 
 def statusOfPc(host):
     resp = ping(host)
-    print(resp)
     if resp is None:
         return 'computer is off'
     else:
         return 'computer is on'
 
-def turnOnPc(message):
-    process = subprocess.run(["wakeonlan", winPcMac], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    answer = process.stdout
-    bot.send_message(message.from_user.id, answer, reply_markup=actions_keyboard())
-    sleep(25)
-    bot.send_message(message.from_user.id, statusOfPc(winPcIp), reply_markup=actions_keyboard())
-
-def turnOffWinPc(message):
+def turnOnPc(macAddress):
+    send_magic_packet(macAddress)
+    
+def turnOffWinPc():
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(hostname=winPcIp, username=winPcUsername, password=winPcPassword, port=sshPort)
@@ -48,13 +43,17 @@ def send_welcome(message):
 def get_text_messages(message):
     if message.from_user.username == telegramUsername:
         if message.text.lower() == 'turn on':
-            turnOnPc(message)
+            turnOnPc(winPcMac)
+            bot.send_message(message.from_user.id, 'magic packet sent to '+winPcMac, reply_markup=actions_keyboard())
+            sleep(25)
+            bot.send_message(message.from_user.id, statusOfPc(winPcIp), reply_markup=actions_keyboard())
         elif message.text.lower() == 'turn off':
             bot.send_message(message.from_user.id, 'computer is shuting down...', reply_markup=actions_keyboard())
-            turnOffWinPc(message)
+            turnOffWinPc()
             sleep(21)
             bot.send_message(message.from_user.id, statusOfPc(winPcIp), reply_markup=actions_keyboard())
         elif message.text.lower() == 'status':
+            bot.send_message(message.from_user.id, 'checking...', reply_markup=actions_keyboard())
             bot.send_message(message.from_user.id, statusOfPc(winPcIp), reply_markup=actions_keyboard())
         else:
             bot.send_message(message.from_user.id, 'I don\'t understand what this means')

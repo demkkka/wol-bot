@@ -1,0 +1,7 @@
+version: '3'
+services:
+  wol-bot:
+    build: .
+    image: demkkka/wol-bot
+    network_mode: host
+    restart: always
