@@ -3,5 +3,6 @@ services:
   wol-bot:
     build: .
     image: demkkka/wol-bot
+    container_name: wol-bot
     network_mode: host
     restart: always
